@@ -1,0 +1,10 @@
+[package]
+name = "macrotis"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0"
+gpui = { git = "https://github.com/zed-industries/zed" }
+# ashpd broken on wayland, see https://github.com/zed-industries/zed/pull/46543
+# gpui = "0.2.2"
