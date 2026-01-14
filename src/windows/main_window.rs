@@ -4,10 +4,10 @@ use crate::{actions::*, widgets::zoomable_image::ZoomableImage, windows::help_wi
 use gpui::*;
 
 pub struct AppWindow {
-    pub focus_handle: FocusHandle,
-    pub image_paths: Vec<PathBuf>,
-    pub selected_img_index: usize,
-    pub zoomable_image: Entity<ZoomableImage>,
+    focus_handle: FocusHandle,
+    image_paths: Vec<PathBuf>,
+    selected_img_index: usize,
+    zoomable_image: Entity<ZoomableImage>,
 }
 
 impl Render for AppWindow {
@@ -36,6 +36,8 @@ impl Render for AppWindow {
 
 impl AppWindow {
     pub fn new(window: &mut Window, cx: &mut App, image_paths: Vec<PathBuf>) -> Self {
+        window.set_window_title(env!("CARGO_PKG_NAME"));
+
         let focus_handle = cx.focus_handle();
         focus_handle.focus(window, cx);
 
@@ -80,12 +82,7 @@ impl AppWindow {
                 kind: WindowKind::Dialog,
                 ..Default::default()
             },
-            |window, cx| {
-                let focus_handle = cx.focus_handle();
-                focus_handle.focus(window, cx);
-
-                cx.new(|_cx| HelpWindow { focus_handle })
-            },
+            |window, cx| cx.new(|cx| HelpWindow::new(window, cx)),
         );
     }
 

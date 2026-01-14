@@ -2,9 +2,9 @@ use gpui::*;
 use std::path::PathBuf;
 
 pub struct ZoomableImage {
-    pub image: Option<PathBuf>,
-    pub zoom_factor: f32,
-    pub manual_offset: Point<Pixels>,
+    image: Option<PathBuf>,
+    zoom_factor: f32,
+    manual_offset: Point<Pixels>,
 }
 
 impl Render for ZoomableImage {

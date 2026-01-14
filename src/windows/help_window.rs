@@ -4,7 +4,7 @@ use crate::actions::*;
 use gpui::*;
 
 pub struct HelpWindow {
-    pub focus_handle: FocusHandle,
+    focus_handle: FocusHandle,
 }
 
 impl Render for HelpWindow {
@@ -40,6 +40,17 @@ impl Render for HelpWindow {
                 )
                 .size_full(),
             )
+    }
+}
+
+impl HelpWindow {
+    pub fn new(window: &mut Window, cx: &mut App) -> Self {
+        window.set_window_title("Help");
+
+        let focus_handle = cx.focus_handle();
+        focus_handle.focus(window, cx);
+
+        Self { focus_handle }
     }
 }
 
