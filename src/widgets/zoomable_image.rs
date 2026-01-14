@@ -42,6 +42,11 @@ impl ZoomableImage {
         }
     }
 
+    pub fn set_image(&mut self, cx: &mut Context<Self>, image: Option<PathBuf>) {
+        self.image = image;
+        cx.notify();
+    }
+
     pub fn zoom_in(&mut self, cx: &mut Context<Self>) {
         self.zoom_factor *= 1.2;
         cx.notify();

@@ -60,7 +60,7 @@ impl AppWindow {
             return;
         }
         self.selected_img_index -= 1;
-        cx.notify();
+        self.set_image(cx, self.image_paths.get(self.selected_img_index).cloned());
     }
 
     fn next_image(&mut self, _action: &NextImage, _window: &mut Window, cx: &mut Context<Self>) {
@@ -69,7 +69,13 @@ impl AppWindow {
         }
 
         self.selected_img_index += 1;
-        cx.notify();
+        self.set_image(cx, self.image_paths.get(self.selected_img_index).cloned());
+    }
+
+    fn set_image(&mut self, cx: &mut Context<Self>, image: Option<PathBuf>) {
+        self.zoomable_image.update(cx, |zoomable_image, cx| {
+            zoomable_image.set_image(cx, image);
+        });
     }
 
     fn open_help(&mut self, _action: &Help, _window: &mut Window, cx: &mut Context<Self>) {
