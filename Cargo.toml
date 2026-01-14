@@ -5,6 +5,10 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
+clap = { version = "4.5", features = ["derive"] }
+clap-serde-derive = "0.2"
+confy = { version = "2.0", features = ["toml_conf"] }
 gpui = { git = "https://github.com/zed-industries/zed" }
+serde = "1.0"
 # ashpd broken on wayland, see https://github.com/zed-industries/zed/pull/46543
 # gpui = "0.2.2"

@@ -14,7 +14,7 @@ impl Render for HelpWindow {
 
         div()
             .track_focus(&self.focus_handle)
-            .on_action(|_: &Quit, window, _cx| window.remove_window())
+            .on_action(|_: &CloseWindow, window, _cx| window.remove_window())
             .bg(white())
             .child(div().child("Help").text_center().text_xl())
             .id("help_root")

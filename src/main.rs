@@ -1,26 +1,37 @@
-use crate::{actions::*, windows::main_window::AppWindow};
+use crate::{
+    actions::*,
+    config::{CONFIG, parse_config},
+    windows::main_window::AppWindow,
+};
 use gpui::*;
-use std::path::PathBuf;
+use std::process::exit;
 
 mod actions;
+mod config;
 mod widgets;
 mod windows;
 
 fn main() {
     let app = Application::new();
-    let args: Vec<_> = std::env::args().skip(1).collect();
+
+    let (paths, config) = match parse_config() {
+        Ok((paths, config)) => (paths, config),
+        Err(err) => {
+            eprintln!("Failed to parse config: {err}");
+            exit(1);
+        }
+    };
+    CONFIG.set(config).unwrap();
+
     let cwd = std::env::current_dir().unwrap_or_default();
-
-    let paths: Vec<_> = args
+    let paths: Vec<_> = paths
         .iter()
-        .map(|arg| {
-            let mut path = PathBuf::from(arg.as_str());
-
+        .map(|path| {
             if path.is_relative() {
-                path = cwd.join(path);
+                cwd.join(path)
+            } else {
+                path.to_path_buf()
             }
-
-            path
         })
         .filter(|path| path.is_file())
         .collect();
@@ -48,7 +59,7 @@ fn main() {
                     KeyBinding::new("up", MoveUp, None),
                     KeyBinding::new("down", MoveDown, None),
                     KeyBinding::new("o", OpenFiles, None),
-                    KeyBinding::new("q", Quit, None),
+                    KeyBinding::new("q", CloseWindow, None),
                 ];
                 cx.bind_keys(bindings.clone());
 

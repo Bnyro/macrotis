@@ -1,6 +1,9 @@
 use std::path::PathBuf;
 
-use crate::{actions::*, widgets::zoomable_image::ZoomableImage, windows::help_window::HelpWindow};
+use crate::{
+    actions::*, config::CONFIG, widgets::zoomable_image::ZoomableImage,
+    windows::help_window::HelpWindow,
+};
 use gpui::*;
 
 pub struct AppWindow {
@@ -13,8 +16,14 @@ pub struct AppWindow {
 impl Render for AppWindow {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         div()
+            .bg(if CONFIG.get().unwrap().transparent {
+                transparent_black()
+            } else {
+                // TODO: theming
+                black()
+            })
             .track_focus(&self.focus_handle)
-            .on_action(|_: &Quit, window, _cx| window.remove_window())
+            .on_action(|_: &CloseWindow, window, _cx| window.remove_window())
             .on_action(cx.listener(Self::open_files))
             .on_action(cx.listener(Self::open_help))
             .on_action(cx.listener(Self::next_image))
