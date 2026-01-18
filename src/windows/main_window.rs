@@ -1,16 +1,19 @@
 use std::path::PathBuf;
 
 use crate::{
-    actions::*, config::CONFIG, widgets::zoomable_image::ZoomableImage,
+    actions::*,
+    config::CONFIG,
+    widgets::{image_info::ImageInfoWidget, zoomable_image::ZoomableImage},
     windows::help_window::HelpWindow,
 };
-use gpui::*;
+use gpui::{prelude::FluentBuilder, *};
 
 pub struct AppWindow {
     focus_handle: FocusHandle,
     image_paths: Vec<PathBuf>,
     selected_img_index: usize,
     zoomable_image: Entity<ZoomableImage>,
+    show_image_info: bool,
 }
 
 impl Render for AppWindow {
@@ -34,12 +37,27 @@ impl Render for AppWindow {
             .on_action(cx.listener(Self::move_down))
             .on_action(cx.listener(Self::move_left))
             .on_action(cx.listener(Self::move_right))
-            .gap_2()
+            .on_action(cx.listener(Self::toggle_image_info))
             .size_full()
-            .items_center()
-            .justify_center()
-            .flex()
-            .child(self.zoomable_image.clone())
+            .relative()
+            .child(
+                div()
+                    .size_full()
+                    .absolute()
+                    .child(self.zoomable_image.clone()),
+            )
+            .when_some(
+                self.selected_image().take_if(|_| self.show_image_info),
+                |container, image_path| {
+                    container.child(
+                        div()
+                            .absolute()
+                            .top_2()
+                            .right_2()
+                            .child(cx.new(|_| ImageInfoWidget::new(image_path))),
+                    )
+                },
+            )
     }
 }
 
@@ -56,7 +74,12 @@ impl AppWindow {
             image_paths,
             selected_img_index: 0,
             zoomable_image: cx.new(|_| ZoomableImage::new(image)),
+            show_image_info: true,
         }
+    }
+
+    fn selected_image(&self) -> Option<PathBuf> {
+        self.image_paths.get(self.selected_img_index).cloned()
     }
 
     fn prev_image(
@@ -69,7 +92,7 @@ impl AppWindow {
             return;
         }
         self.selected_img_index -= 1;
-        self.set_image(cx, self.image_paths.get(self.selected_img_index).cloned());
+        self.set_image(cx, self.selected_image());
     }
 
     fn next_image(&mut self, _action: &NextImage, _window: &mut Window, cx: &mut Context<Self>) {
@@ -78,7 +101,7 @@ impl AppWindow {
         }
 
         self.selected_img_index += 1;
-        self.set_image(cx, self.image_paths.get(self.selected_img_index).cloned());
+        self.set_image(cx, self.selected_image());
     }
 
     fn set_image(&mut self, cx: &mut Context<Self>, image: Option<PathBuf>) {
@@ -166,5 +189,16 @@ impl AppWindow {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.move_down(cx);
         })
+    }
+
+    pub fn toggle_image_info(
+        &mut self,
+        _action: &ToggleImageInfo,
+        _window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        self.show_image_info = !self.show_image_info;
+
+        cx.notify();
     }
 }

@@ -14,21 +14,31 @@ impl Render for ZoomableImage {
 
             div()
                 .id("container")
-                .overflow_scroll()
-                .left(offset.x)
-                .top(offset.y)
+                .size_full()
+                .items_center()
+                .justify_center()
+                .flex()
                 .child(
-                    img(image.clone())
-                        .w(self.calculate_width(window))
-                        .with_fallback(|| {
-                            div()
-                                .text_color(red())
-                                .child("failed to load image")
-                                .into_any_element()
-                        }),
+                    div()
+                        .id("image_wrapper")
+                        .left(offset.x)
+                        .top(offset.y)
+                        .child(
+                            img(image.clone())
+                                .w(self.calculate_width(window))
+                                .with_fallback(|| {
+                                    div()
+                                        .text_color(red())
+                                        .child("failed to load image")
+                                        .into_any_element()
+                                }),
+                        ),
                 )
         } else {
-            div().id("container")
+            div()
+                .id("container")
+                .text_color(red())
+                .child("No image provided yet")
         }
     }
 }

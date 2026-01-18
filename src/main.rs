@@ -8,6 +8,7 @@ use std::process::exit;
 
 mod actions;
 mod config;
+mod image_info;
 mod widgets;
 mod windows;
 
@@ -59,6 +60,7 @@ fn main() {
                     KeyBinding::new("up", MoveUp, None),
                     KeyBinding::new("down", MoveDown, None),
                     KeyBinding::new("o", OpenFiles, None),
+                    KeyBinding::new("i", ToggleImageInfo, None),
                     KeyBinding::new("q", CloseWindow, None),
                 ];
                 cx.bind_keys(bindings.clone());
