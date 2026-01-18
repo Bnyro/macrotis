@@ -1,6 +1,8 @@
 use gpui::*;
 use std::path::PathBuf;
 
+use crate::config::CONFIG;
+
 pub struct ZoomableImage {
     image: Option<PathBuf>,
     zoom_factor: f32,
@@ -28,7 +30,7 @@ impl Render for ZoomableImage {
                                 .w(self.calculate_width(window))
                                 .with_fallback(|| {
                                     div()
-                                        .text_color(red())
+                                        .text_color(CONFIG.get().unwrap().theme.error.into_rgba())
                                         .child("failed to load image")
                                         .into_any_element()
                                 }),
@@ -37,7 +39,7 @@ impl Render for ZoomableImage {
         } else {
             div()
                 .id("container")
-                .text_color(red())
+                .text_color(CONFIG.get().unwrap().theme.error.into_rgba())
                 .child("No image provided yet")
         }
     }

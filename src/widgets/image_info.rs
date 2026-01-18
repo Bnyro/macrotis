@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use bytesize::ByteSize;
 use gpui::{prelude::FluentBuilder, *};
 
-use crate::image_info::ImageInfo;
+use crate::{config::CONFIG, image_info::ImageInfo};
 
 pub struct ImageInfoWidget {
     path: PathBuf,
@@ -25,11 +25,11 @@ impl Render for ImageInfoWidget {
 
         div()
             .border(px(2.0))
-            .border_color(black())
+            .border_color(CONFIG.get().unwrap().theme.primary.into_rgba())
             .rounded_md()
             .px_2()
-            .bg(opaque_grey(0.3, 0.5))
-            .text_color(white())
+            .bg(CONFIG.get().unwrap().theme.surface.into_rgba())
+            .text_color(CONFIG.get().unwrap().theme.foreground.into_rgba())
             .flex_col()
             .when_some(img_info.file_name, |div, file_name| {
                 div.child(format!("Filename: {file_name}"))

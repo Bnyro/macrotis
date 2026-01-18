@@ -20,10 +20,9 @@ impl Render for AppWindow {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         div()
             .bg(if CONFIG.get().unwrap().transparent {
-                transparent_black()
+                transparent_black().to_rgb()
             } else {
-                // TODO: theming
-                black()
+                CONFIG.get().unwrap().theme.background.into_rgba()
             })
             .track_focus(&self.focus_handle)
             .on_action(|_: &CloseWindow, window, _cx| window.remove_window())

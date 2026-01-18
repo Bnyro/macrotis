@@ -7,6 +7,7 @@ use gpui::*;
 use std::process::exit;
 
 mod actions;
+mod color;
 mod config;
 mod image_info;
 mod widgets;

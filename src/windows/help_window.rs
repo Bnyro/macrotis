@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-use crate::actions::*;
+use crate::{actions::*, config::CONFIG};
 use gpui::*;
 
 pub struct HelpWindow {
@@ -15,8 +15,14 @@ impl Render for HelpWindow {
         div()
             .track_focus(&self.focus_handle)
             .on_action(|_: &CloseWindow, window, _cx| window.remove_window())
-            .bg(white())
-            .child(div().child("Help").text_center().text_xl())
+            .bg(CONFIG.get().unwrap().theme.background.into_rgba())
+            .child(
+                div()
+                    .text_color(CONFIG.get().unwrap().theme.primary.into_rgba())
+                    .child("Help")
+                    .text_center()
+                    .text_xl(),
+            )
             .id("help_root")
             .size_full()
             .overflow_scroll()
@@ -68,15 +74,20 @@ impl Render for KeyBindingItem {
             .p_1()
             .gap_1()
             .items_center()
+            .text_color(CONFIG.get().unwrap().theme.foreground.into_rgba())
             .child(
-                div().p_1().bg(opaque_grey(0.7, 1.0)).rounded_md().child(
-                    binding
-                        .keystrokes()
-                        .iter()
-                        .map(|keystroke| keystroke.key())
-                        .collect::<Vec<_>>()
-                        .join("-"),
-                ),
+                div()
+                    .p_1()
+                    .bg(CONFIG.get().unwrap().theme.surface.into_rgba())
+                    .rounded_md()
+                    .child(
+                        binding
+                            .keystrokes()
+                            .iter()
+                            .map(|keystroke| keystroke.key())
+                            .collect::<Vec<_>>()
+                            .join("-"),
+                    ),
             )
             .child(binding.action().name())
     }

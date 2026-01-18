@@ -1,12 +1,15 @@
 use std::{
     io::{self, Read},
     path::PathBuf,
+    str::FromStr,
     sync::OnceLock,
 };
 
 use clap::{ArgAction, Parser};
 use clap_serde_derive::ClapSerde;
 use serde::{Deserialize, Serialize};
+
+use crate::color::Color;
 
 pub static CONFIG: OnceLock<Config> = OnceLock::new();
 
@@ -25,7 +28,7 @@ struct ArgsWithConfig {
     config_path: Option<std::path::PathBuf>,
 
     /// Arguments that are configurable via the config file as well
-    #[clap(flatten)]
+    #[command(flatten)]
     config: <Config as ClapSerde>::Opt,
 }
 
@@ -34,6 +37,45 @@ pub struct Config {
     /// Whether to make the window transparent.
     #[arg(short, long, action = ArgAction::SetFalse)]
     pub transparent: bool,
+    /// Theme config.
+    #[command(flatten)]
+    pub theme: ThemeConfig,
+}
+
+#[derive(Serialize, Deserialize, Debug, clap::Args)]
+pub struct ThemeConfig {
+    /// Background color.
+    #[arg(short, long, default_value = "#1e1e2e")]
+    pub background: Color,
+    /// Text color.
+    #[arg(short, long, default_value = "#cdd6f4")]
+    pub foreground: Color,
+
+    /// Surface color.
+    #[arg(short, long, default_value = "#6c708688")]
+    pub surface: Color,
+    /// Primary color.
+    #[arg(short, long, default_value = "#cba6f7")]
+    pub primary: Color,
+
+    /// Error color.
+    #[arg(short, long, default_value = "#d20f39")]
+    pub error: Color,
+}
+
+// duplicated defaults implementation, i.e. default theme is redefined :/
+// blocked by https://github.com/clap-rs/clap/issues/3116
+impl Default for ThemeConfig {
+    fn default() -> Self {
+        // Default to Catppuccin Mocha colors, see https://catppuccin.com/palette/
+        Self {
+            background: Color::from_str("#1e1e2e").unwrap(),
+            foreground: Color::from_str("#cdd6f4").unwrap(),
+            surface: Color::from_str("#6c708688").unwrap(),
+            primary: Color::from_str("#cba6f7").unwrap(),
+            error: Color::from_str("#d20f39").unwrap(),
+        }
+    }
 }
 
 fn read_paths_from_stdin() -> Vec<PathBuf> {
