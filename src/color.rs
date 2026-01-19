@@ -1,9 +1,15 @@
-use std::{fmt::Display, str::FromStr};
+use std::{
+    fmt::{self, Display},
+    str::FromStr,
+};
 
 use gpui::Rgba;
-use serde::{Deserialize, Serialize};
+use serde::{
+    Deserialize, Deserializer, Serialize, Serializer,
+    de::{self, Visitor},
+};
 
-#[derive(Clone, Copy, Serialize, Deserialize, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 pub struct Color {
     r: u8,
     g: u8,
@@ -15,6 +21,52 @@ impl Color {
     #[allow(dead_code)]
     pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
         Self { r, g, b, a }
+    }
+}
+
+impl Default for Color {
+    fn default() -> Self {
+        Self {
+            r: Default::default(),
+            g: Default::default(),
+            b: Default::default(),
+            a: 255,
+        }
+    }
+}
+
+impl Serialize for Color {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&self.to_string())
+    }
+}
+
+struct ColorVisitor;
+
+impl<'de> Visitor<'de> for ColorVisitor {
+    type Value = Color;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("an integer between -2^31 and 2^31")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Color::from_str(v).map_err(|err| de::Error::custom(err))
+    }
+}
+
+impl<'de> Deserialize<'de> for Color {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_str(ColorVisitor)
     }
 }
 

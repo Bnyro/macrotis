@@ -10,6 +10,7 @@ mod actions;
 mod color;
 mod config;
 mod image_info;
+mod macros;
 mod widgets;
 mod windows;
 

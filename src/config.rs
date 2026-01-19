@@ -9,7 +9,7 @@ use clap::{ArgAction, Parser};
 use clap_serde_derive::ClapSerde;
 use serde::{Deserialize, Serialize};
 
-use crate::color::Color;
+use crate::{color::Color, macros};
 
 pub static CONFIG: OnceLock<Config> = OnceLock::new();
 
@@ -36,35 +36,52 @@ struct ArgsWithConfig {
 pub struct Config {
     /// Whether to make the window transparent.
     #[arg(short, long, action = ArgAction::SetFalse)]
+    #[serde(default)]
     pub transparent: bool,
     /// Theme config.
     #[command(flatten)]
+    #[serde(default)]
     pub theme: ThemeConfig,
 }
 
 #[derive(Serialize, Deserialize, Debug, clap::Args)]
 pub struct ThemeConfig {
     /// Background color.
-    #[arg(short, long, default_value = "#1e1e2e")]
+    #[arg(short, long, default_value_t = ThemeConfig::background_default())]
+    #[serde(default = "ThemeConfig::background_default")]
     pub background: Color,
     /// Text color.
-    #[arg(short, long, default_value = "#cdd6f4")]
+    #[arg(short, long, default_value_t = ThemeConfig::foreground_default())]
+    #[serde(default = "ThemeConfig::foreground_default")]
     pub foreground: Color,
 
     /// Surface color.
-    #[arg(short, long, default_value = "#6c708688")]
+    #[arg(short, long, default_value_t = ThemeConfig::surface_default())]
+    #[serde(default = "ThemeConfig::surface_default")]
     pub surface: Color,
     /// Primary color.
-    #[arg(short, long, default_value = "#cba6f7")]
+    #[arg(short, long, default_value_t = ThemeConfig::primary_default())]
+    #[serde(default = "ThemeConfig::primary_default")]
     pub primary: Color,
 
     /// Error color.
-    #[arg(short, long, default_value = "#d20f39")]
+    #[arg(short, long, default_value_t = ThemeConfig::error_default())]
+    #[serde(default = "ThemeConfig::error_default")]
     pub error: Color,
 }
 
-// duplicated defaults implementation, i.e. default theme is redefined :/
-// blocked by https://github.com/clap-rs/clap/issues/3116
+// Automatically generate default getter methods to be used with #[serde(default = ...)]
+// and #[arg(default_value_t = ...)]
+//
+// This avoids having to re-define the default theme colors in multiple places.
+//
+// Could possibly be removed if https://github.com/clap-rs/clap/issues/3116 is implemented
+macros::make_default_value_getter!(ThemeConfig, background, Color);
+macros::make_default_value_getter!(ThemeConfig, foreground, Color);
+macros::make_default_value_getter!(ThemeConfig, surface, Color);
+macros::make_default_value_getter!(ThemeConfig, primary, Color);
+macros::make_default_value_getter!(ThemeConfig, error, Color);
+
 impl Default for ThemeConfig {
     fn default() -> Self {
         // Default to Catppuccin Mocha colors, see https://catppuccin.com/palette/
