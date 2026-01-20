@@ -54,6 +54,14 @@ fn main() {
                 .unwrap()
                 .fullscreen
                 .then(|| WindowBounds::Fullscreen(Bounds::default())),
+            app_id: Some(
+                CONFIG
+                    .get()
+                    .unwrap()
+                    .app_id
+                    .clone()
+                    .unwrap_or_else(|| env!("CARGO_PKG_NAME").to_string()),
+            ),
             ..Default::default()
         };
         app.spawn(async move |cx| {

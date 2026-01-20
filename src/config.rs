@@ -44,6 +44,10 @@ pub struct Config {
     #[arg(short, long, action = ArgAction::SetTrue)]
     #[serde(default)]
     pub fullscreen: bool,
+    /// App ID - specifically useful for styling the app's window via desktop environments.
+    #[arg(long)]
+    #[serde(default)]
+    pub app_id: Option<String>,
     /// Theme config.
     #[command(flatten)]
     #[serde(default)]
