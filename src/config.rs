@@ -19,7 +19,7 @@ static CONFIG_FILE_NAME: &str = "config";
 ///
 /// Example usage: `macrotis example1.png example2.svg`
 #[derive(Parser)]
-#[clap(author, version, about)]
+#[clap(author, version, about, styles = get_styles())]
 struct ArgsWithConfig {
     /// Path to image files. Can be relative to the current work directory or absolute.
     /// If '-' is provided as argument, the paths will be read from stdin, separated by newlines.
@@ -37,9 +37,13 @@ struct ArgsWithConfig {
 #[derive(ClapSerde, Serialize, Deserialize, Debug)]
 pub struct Config {
     /// Whether to make the window transparent.
-    #[arg(short, long, action = ArgAction::SetFalse)]
+    #[arg(short, long, action = ArgAction::SetTrue)]
     #[serde(default)]
-    pub transparent: bool,
+    pub no_transparency: bool,
+    /// Whether to open the app in fullscreen mode.
+    #[arg(short, long, action = ArgAction::SetTrue)]
+    #[serde(default)]
+    pub fullscreen: bool,
     /// Theme config.
     #[command(flatten)]
     #[serde(default)]
@@ -53,25 +57,25 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Debug, clap::Args)]
 pub struct ThemeConfig {
     /// Background color.
-    #[arg(short, long, default_value_t = ThemeConfig::background_default())]
+    #[arg(long, group = "theme", default_value_t = ThemeConfig::background_default())]
     #[serde(default = "ThemeConfig::background_default")]
     pub background: Color,
     /// Text color.
-    #[arg(short, long, default_value_t = ThemeConfig::foreground_default())]
+    #[arg(long, default_value_t = ThemeConfig::foreground_default())]
     #[serde(default = "ThemeConfig::foreground_default")]
     pub foreground: Color,
 
     /// Surface color.
-    #[arg(short, long, default_value_t = ThemeConfig::surface_default())]
+    #[arg(long, default_value_t = ThemeConfig::surface_default())]
     #[serde(default = "ThemeConfig::surface_default")]
     pub surface: Color,
     /// Primary color.
-    #[arg(short, long, default_value_t = ThemeConfig::primary_default())]
+    #[arg(long, default_value_t = ThemeConfig::primary_default())]
     #[serde(default = "ThemeConfig::primary_default")]
     pub primary: Color,
 
     /// Error color.
-    #[arg(short, long, default_value_t = ThemeConfig::error_default())]
+    #[arg(long, default_value_t = ThemeConfig::error_default())]
     #[serde(default = "ThemeConfig::error_default")]
     pub error: Color,
 }
@@ -194,4 +198,42 @@ pub fn parse_cli_args_with_config() -> anyhow::Result<(Vec<PathBuf>, Config)> {
     let config = config.merge(&mut args.config);
 
     Ok((args.images, config))
+}
+
+pub fn get_styles() -> clap::builder::Styles {
+    clap::builder::Styles::styled()
+        .usage(
+            anstyle::Style::new()
+                .bold()
+                .underline()
+                .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Yellow))),
+        )
+        .header(
+            anstyle::Style::new()
+                .bold()
+                .underline()
+                .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Yellow))),
+        )
+        .literal(
+            anstyle::Style::new().fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Green))),
+        )
+        .invalid(
+            anstyle::Style::new()
+                .bold()
+                .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Red))),
+        )
+        .error(
+            anstyle::Style::new()
+                .bold()
+                .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Red))),
+        )
+        .valid(
+            anstyle::Style::new()
+                .bold()
+                .underline()
+                .fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::Green))),
+        )
+        .placeholder(
+            anstyle::Style::new().fg_color(Some(anstyle::Color::Ansi(anstyle::AnsiColor::White))),
+        )
 }

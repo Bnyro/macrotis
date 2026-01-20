@@ -49,6 +49,11 @@ fn main() {
         let window_opts = WindowOptions {
             window_background: WindowBackgroundAppearance::Transparent,
             window_decorations: Some(WindowDecorations::Client),
+            window_bounds: CONFIG
+                .get()
+                .unwrap()
+                .fullscreen
+                .then(|| WindowBounds::Fullscreen(Bounds::default())),
             ..Default::default()
         };
         app.spawn(async move |cx| {
