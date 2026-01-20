@@ -13,10 +13,8 @@ extern crate rust_i18n;
 i18n!("locales", fallback = "en");
 
 mod actions;
-mod color;
 mod config;
 mod image_info;
-mod macros;
 mod widgets;
 mod windows;
 

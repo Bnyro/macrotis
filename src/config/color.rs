@@ -3,7 +3,6 @@ use std::{
     str::FromStr,
 };
 
-use gpui::Rgba;
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer,
     de::{self, Visitor},
@@ -11,10 +10,10 @@ use serde::{
 
 #[derive(Clone, Copy, Debug)]
 pub struct Color {
-    r: u8,
-    g: u8,
-    b: u8,
-    a: u8,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8,
 }
 
 impl Color {
@@ -115,22 +114,5 @@ impl Display for Color {
             b = self.b,
             a = self.a
         )
-    }
-}
-
-impl From<Color> for Rgba {
-    fn from(val: Color) -> Self {
-        Rgba {
-            r: std::convert::Into::<f32>::into(val.r) / 256.0,
-            g: std::convert::Into::<f32>::into(val.g) / 256.0,
-            b: std::convert::Into::<f32>::into(val.b) / 256.0,
-            a: std::convert::Into::<f32>::into(val.a) / 256.0,
-        }
-    }
-}
-
-impl Color {
-    pub fn into_rgba(self) -> Rgba {
-        self.into()
     }
 }

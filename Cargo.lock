@@ -956,6 +956,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "4.5.65"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "430b4dc2b5e3861848de79627b2bedc9f3342c7da5173a14eaa5d0f8dc18ae5d"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_derive"
 version = "4.5.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -972,6 +981,16 @@ name = "clap_lex"
 version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3e64b0cc0439b12df2fa678eae89a1c56a529fd067a9115f7827f1fffd22b32"
+
+[[package]]
+name = "clap_mangen"
+version = "0.2.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "439ea63a92086df93893164221ad4f24142086d535b3a0957b9b9bea2dc86301"
+dependencies = [
+ "clap",
+ "roff",
+]
 
 [[package]]
 name = "cocoa"
@@ -3038,6 +3057,8 @@ dependencies = [
  "bytesize",
  "clap",
  "clap-serde-derive",
+ "clap_complete",
+ "clap_mangen",
  "confy",
  "gpui",
  "imagesize 0.14.0",
@@ -4243,6 +4264,12 @@ checksum = "0c6a884d2998352bb4daf0183589aec883f16a6da1f4dde84d8e2e9a5409a1ce"
 dependencies = [
  "bytemuck",
 ]
+
+[[package]]
+name = "roff"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88f8660c1ff60292143c98d08fc6e2f654d722db50410e3f3797d40baaf9d8f3"
 
 [[package]]
 name = "roxmltree"
