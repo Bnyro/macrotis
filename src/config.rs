@@ -61,25 +61,25 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Debug, clap::Args)]
 pub struct ThemeConfig {
     /// Background color.
-    #[arg(long, group = "theme", default_value_t = ThemeConfig::background_default())]
+    #[arg(long = "background-color", group = "theme", default_value_t = ThemeConfig::background_default())]
     #[serde(default = "ThemeConfig::background_default")]
     pub background: Color,
-    /// Text color.
-    #[arg(long, default_value_t = ThemeConfig::foreground_default())]
+    /// Foreground (text) color.
+    #[arg(long = "foreground-color", default_value_t = ThemeConfig::foreground_default())]
     #[serde(default = "ThemeConfig::foreground_default")]
     pub foreground: Color,
 
     /// Surface color.
-    #[arg(long, default_value_t = ThemeConfig::surface_default())]
+    #[arg(long = "surface-color", default_value_t = ThemeConfig::surface_default())]
     #[serde(default = "ThemeConfig::surface_default")]
     pub surface: Color,
     /// Primary color.
-    #[arg(long, default_value_t = ThemeConfig::primary_default())]
+    #[arg(long = "primary-color", default_value_t = ThemeConfig::primary_default())]
     #[serde(default = "ThemeConfig::primary_default")]
     pub primary: Color,
 
     /// Error color.
-    #[arg(long, default_value_t = ThemeConfig::error_default())]
+    #[arg(long = "error-color", default_value_t = ThemeConfig::error_default())]
     #[serde(default = "ThemeConfig::error_default")]
     pub error: Color,
 }
