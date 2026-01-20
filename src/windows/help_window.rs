@@ -19,7 +19,7 @@ impl Render for HelpWindow {
             .child(
                 div()
                     .text_color(CONFIG.get().unwrap().theme.primary.into_rgba())
-                    .child("Help")
+                    .child(t!("actions.help").to_string())
                     .text_center()
                     .text_xl(),
             )
@@ -51,7 +51,7 @@ impl Render for HelpWindow {
 
 impl HelpWindow {
     pub fn new(window: &mut Window, cx: &mut App) -> Self {
-        window.set_window_title("Help");
+        window.set_window_title(&t!("actions.help"));
 
         let focus_handle = cx.focus_handle();
         focus_handle.focus(window, cx);
@@ -89,6 +89,12 @@ impl Render for KeyBindingItem {
                             .join("-"),
                     ),
             )
-            .child(binding.action().name())
+            .child(
+                t!(format!(
+                    "actions.{}",
+                    binding.action().name().to_lowercase()
+                ))
+                .to_string(),
+            )
     }
 }

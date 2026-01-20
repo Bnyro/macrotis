@@ -1,7 +1,8 @@
 use gpui::actions;
 
-actions!(app, [Help, CloseWindow]);
-actions!(app, [NextImage, PreviousImage, OpenFiles]);
-actions!(app, [ZoomIn, ZoomOut]);
-actions!(app, [MoveUp, MoveDown, MoveLeft, MoveRight]);
-actions!(app, [ToggleImageInfo]);
+// All of these must be translated in the `locales` folder!
+actions!([Help, CloseWindow]);
+actions!([NextImage, PreviousImage, OpenFiles]);
+actions!([ZoomIn, ZoomOut]);
+actions!([MoveUp, MoveDown, MoveLeft, MoveRight]);
+actions!([ToggleImageInfo]);

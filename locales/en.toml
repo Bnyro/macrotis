@@ -1,0 +1,19 @@
+[image]
+filename = "Filename: %{filename}"
+size = "Size: %{size}"
+type = "Type: %{type}"
+resolution = "Resolution: %{resolution}"
+
+[actions]
+help = "Help"
+nextimage = "Next image"
+previousimage = "Previous image"
+openfiles = "Open files"
+closewindow = "Close window"
+zoomin = "Zoom in"
+zoomout = "Zoom out"
+moveup = "Move up"
+movedown = "Move down"
+moveleft = "Move left"
+moveright = "Move right"
+toggleimageinfo = "Toggle image info"

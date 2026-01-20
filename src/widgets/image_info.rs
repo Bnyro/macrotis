@@ -32,16 +32,16 @@ impl Render for ImageInfoWidget {
             .text_color(CONFIG.get().unwrap().theme.foreground.into_rgba())
             .flex_col()
             .when_some(img_info.file_name, |div, file_name| {
-                div.child(format!("Filename: {file_name}"))
+                div.child(t!("image.filename", "filename" => file_name).to_string())
             })
             .when_some(img_info.file_type, |div, file_type| {
-                div.child(format!("Type: {file_type}"))
+                div.child(t!("image.type", "type" => file_type).to_string())
             })
             .when_some(img_info.resolution, |div, resolution| {
-                div.child(format!("Resolution: {resolution}"))
+                div.child(t!("image.resolution", "resolution" => resolution).to_string())
             })
             .when_some(img_info.file_size, |div, file_size| {
-                div.child(format!("Size: {}", ByteSize::b(file_size)))
+                div.child(t!("image.size", "size" => ByteSize::b(file_size)).to_string())
             })
     }
 }

@@ -6,6 +6,12 @@ use crate::{
 use gpui::*;
 use std::process::exit;
 
+#[macro_use]
+extern crate rust_i18n;
+
+// init i18n from the locales folder
+i18n!("locales", fallback = "en");
+
 mod actions;
 mod color;
 mod config;
