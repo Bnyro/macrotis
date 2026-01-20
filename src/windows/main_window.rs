@@ -135,14 +135,14 @@ impl AppWindow {
             let mut selection_result = recv.await.ok().and_then(|res| res.ok()).and_then(|res| res);
 
             if let Some(images) = &mut selection_result {
-                let _ = window.update(cx, |window, cx| {
-                    let prev_size = window.image_paths.len();
+                let _ = window.update(cx, |this, cx| {
+                    let prev_size = this.image_paths.len();
 
                     // append new images and seek to first new image
-                    window.image_paths.append(images);
-                    window.selected_img_index = prev_size;
+                    this.image_paths.append(images);
+                    this.selected_img_index = prev_size;
 
-                    cx.notify();
+                    this.set_image(cx, this.selected_image());
                 });
             }
         })
