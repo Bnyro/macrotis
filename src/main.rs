@@ -40,13 +40,9 @@ fn main() {
         .collect();
 
     app.run(move |app| {
-        let window_bounds =
-            WindowBounds::Windowed(Bounds::centered(None, size(px(500.0), px(300.0)), app));
-
         let window_opts = WindowOptions {
             window_background: WindowBackgroundAppearance::Transparent,
             window_decorations: Some(WindowDecorations::Client),
-            window_bounds: Some(window_bounds),
             ..Default::default()
         };
         app.spawn(async move |cx| {
