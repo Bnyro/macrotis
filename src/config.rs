@@ -7,11 +7,13 @@ use std::{
 
 use clap::{ArgAction, Parser};
 use clap_serde_derive::ClapSerde;
+use gpui::Action;
 use serde::{Deserialize, Serialize};
 
-use crate::{color::Color, macros};
+use crate::{actions::*, color::Color, macros};
 
 pub static CONFIG: OnceLock<Config> = OnceLock::new();
+static CONFIG_FILE_NAME: &str = "config";
 
 /// Display images from files.
 ///
@@ -42,6 +44,10 @@ pub struct Config {
     #[command(flatten)]
     #[serde(default)]
     pub theme: ThemeConfig,
+    /// Key bindings.
+    #[arg(skip)]
+    #[serde(default)]
+    pub keybindings: Vec<KeyBinding>,
 }
 
 #[derive(Serialize, Deserialize, Debug, clap::Args)]
@@ -95,6 +101,49 @@ impl Default for ThemeConfig {
     }
 }
 
+/// A key binding consisting of a keyboard shortcut and a [gpui::Action].
+#[derive(Serialize, Deserialize, clap::Args, Debug, Clone)]
+pub struct KeyBinding {
+    /// The keyboard shortcut that should trigger [action].
+    ///
+    /// Multiple keys have to be separated by '-', e.g. 'ctrl-a'.
+    ///
+    /// Important keys:
+    /// - 'ctrl', 'shift', 'alt', 'super'
+    /// - 'left', 'right', 'up', 'down'
+    pub key: String,
+    /// The action to be triggered by the keyboard shortcut.
+    ///
+    /// Must be one of the ones defined in [crate::actions].
+    pub action: String,
+}
+
+impl KeyBinding {
+    pub fn new<T: Action>(key: &str, action: T) -> Self {
+        KeyBinding {
+            key: key.to_string(),
+            action: action.name().to_string(),
+        }
+    }
+}
+
+fn default_key_bindings() -> Vec<KeyBinding> {
+    vec![
+        KeyBinding::new("?", Help),
+        KeyBinding::new("l", NextImage),
+        KeyBinding::new("h", PreviousImage),
+        KeyBinding::new("+", ZoomIn),
+        KeyBinding::new("-", ZoomOut),
+        KeyBinding::new("left", MoveLeft),
+        KeyBinding::new("right", MoveRight),
+        KeyBinding::new("up", MoveUp),
+        KeyBinding::new("down", MoveDown),
+        KeyBinding::new("o", OpenFiles),
+        KeyBinding::new("i", ToggleImageInfo),
+        KeyBinding::new("q", CloseWindow),
+    ]
+}
+
 fn read_paths_from_stdin() -> Vec<PathBuf> {
     let stdin = io::stdin();
     let mut handle = stdin.lock();
@@ -107,21 +156,41 @@ fn read_paths_from_stdin() -> Vec<PathBuf> {
     input_str.split("\n").map(PathBuf::from).collect()
 }
 
-pub fn parse_config() -> anyhow::Result<(Vec<PathBuf>, Config)> {
+fn read_config_file(config_path_override: Option<PathBuf>) -> anyhow::Result<Config> {
+    let mut config: Config = if let Some(config_path) = &config_path_override {
+        confy::load_path(config_path)?
+    } else {
+        confy::load::<Config>(env!("CARGO_PKG_NAME"), Some(CONFIG_FILE_NAME)).unwrap_or_default()
+    };
+
+    // setting serde default on `keybindings` doesn't work due to
+    // the clap_derive_macro, hence we manually have to override the default here if needed
+    if config.keybindings.is_empty() {
+        config.keybindings = default_key_bindings();
+    }
+
+    if config_path_override.is_none() {
+        // store the current config including the default key bindings (if no bindings are specified)
+        //
+        // this automatically writes the default config
+        confy::store(env!("CARGO_PKG_NAME"), CONFIG_FILE_NAME, &config)?;
+    }
+
+    Ok(config)
+}
+
+/// Parse the CLI arguments and fall back to the config file for all arguments
+/// that were not provided.
+pub fn parse_cli_args_with_config() -> anyhow::Result<(Vec<PathBuf>, Config)> {
     let mut args = ArgsWithConfig::parse();
+    let config = read_config_file(args.config_path)?;
 
     // parse image paths from stdin if '-' is provided as argument
     if args.images == vec![PathBuf::from("-")] {
         args.images = read_paths_from_stdin();
     }
 
-    let config: Config = if let Some(config_path) = args.config_path {
-        confy::load_path(config_path)?
-    } else {
-        confy::load::<Config>(env!("CARGO_PKG_NAME"), Some(env!("CARGO_PKG_NAME")))
-            .unwrap_or_default()
-    };
-
+    // merge with the provided CLI arguments
     let config = config.merge(&mut args.config);
 
     Ok((args.images, config))

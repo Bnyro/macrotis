@@ -1,6 +1,6 @@
 use crate::{
     actions::*,
-    config::{CONFIG, parse_config},
+    config::{CONFIG, parse_cli_args_with_config},
     windows::main_window::AppWindow,
 };
 use gpui::*;
@@ -23,7 +23,7 @@ mod windows;
 fn main() {
     let app = Application::new();
 
-    let (paths, config) = match parse_config() {
+    let (paths, config) = match parse_cli_args_with_config() {
         Ok((paths, config)) => (paths, config),
         Err(err) => {
             eprintln!("Failed to parse config: {err}");
@@ -53,21 +53,7 @@ fn main() {
         };
         app.spawn(async move |cx| {
             cx.open_window(window_opts, |window, cx| {
-                let bindings = [
-                    KeyBinding::new("?", Help, None),
-                    KeyBinding::new("l", NextImage, None),
-                    KeyBinding::new("h", PreviousImage, None),
-                    KeyBinding::new("+", ZoomIn, None),
-                    KeyBinding::new("-", ZoomOut, None),
-                    KeyBinding::new("left", MoveLeft, None),
-                    KeyBinding::new("right", MoveRight, None),
-                    KeyBinding::new("up", MoveUp, None),
-                    KeyBinding::new("down", MoveDown, None),
-                    KeyBinding::new("o", OpenFiles, None),
-                    KeyBinding::new("i", ToggleImageInfo, None),
-                    KeyBinding::new("q", CloseWindow, None),
-                ];
-                cx.bind_keys(bindings.clone());
+                cx.bind_keys(build_key_bindings_from_config());
 
                 cx.new(|cx| AppWindow::new(window, cx, paths))
             })?;
