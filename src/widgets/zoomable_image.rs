@@ -39,6 +39,10 @@ impl Render for ZoomableImage {
         } else {
             div()
                 .id("container")
+                .size_full()
+                .flex()
+                .justify_center()
+                .items_center()
                 .text_color(CONFIG.get().unwrap().theme.error.into_rgba())
                 .child("No image provided yet")
         }
