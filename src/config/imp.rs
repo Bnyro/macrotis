@@ -62,7 +62,7 @@ fn read_config_file(config_path_override: Option<PathBuf>) -> anyhow::Result<Con
         confy::load::<Config>(env!("CARGO_PKG_NAME"), Some(CONFIG_FILE_NAME)).unwrap_or_default()
     };
 
-    // setting serde default on `keybindings` doesn't work due to
+    // HACK: setting serde default on `keybindings` doesn't work due to
     // the clap_derive_macro, hence we manually have to override the default here if needed
     if config.keybindings.is_empty() {
         config.keybindings = default_key_bindings();

@@ -25,6 +25,7 @@ fn main() -> std::io::Result<()> {
 
     build_manpages(out_dir)?;
     gen_completions(out_dir)?;
+    gen_example_config(out_dir)?;
 
     // HACK: tell src/config/mod.rs that the build process now started, i.e.
     // that it should now also import and use the other dependencies
@@ -34,12 +35,11 @@ fn main() -> std::io::Result<()> {
 }
 
 fn build_manpages(out_dir: &Path) -> std::io::Result<()> {
-    let out_file = out_dir.join(concat!(env!("CARGO_PKG_NAME"), ".1"));
-
     let man = clap_mangen::Man::new(ArgsWithConfig::command());
     let mut buffer: Vec<u8> = vec![];
     man.render(&mut buffer)?;
 
+    let out_file = out_dir.join(concat!(env!("CARGO_PKG_NAME"), ".1"));
     std::fs::write(&out_file, buffer)?;
 
     Ok(())
@@ -52,6 +52,18 @@ fn gen_completions(out_dir: &Path) -> std::io::Result<()> {
     generate_to(Bash, &mut cmd, env!("CARGO_PKG_NAME"), out_dir)?;
     generate_to(Zsh, &mut cmd, env!("CARGO_PKG_NAME"), out_dir)?;
     generate_to(Fish, &mut cmd, env!("CARGO_PKG_NAME"), out_dir)?;
+
+    Ok(())
+}
+
+fn gen_example_config(out_dir: &Path) -> std::io::Result<()> {
+    let default_config = Config::default();
+    let config_str = toml::to_string(&default_config).map_err(|err| std::io::Error::other(err))?;
+
+    // example config doesn't contain any keybindings, due to the HACK applied in
+    // the `read_config_file` method
+    let out_file = out_dir.join("config.toml.example");
+    std::fs::write(&out_file, config_str)?;
 
     Ok(())
 }
