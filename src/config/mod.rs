@@ -104,7 +104,7 @@ impl Default for ThemeConfig {
 /// A key binding consisting of a keyboard shortcut and a [gpui::Action].
 #[derive(Serialize, Deserialize, clap::Args, Debug, Clone)]
 pub struct KeyBinding {
-    /// The keyboard shortcut that should trigger [action].
+    /// The keyboard shortcut that should trigger [KeyBinding::action].
     ///
     /// Multiple keys have to be separated by '-', e.g. 'ctrl-a'.
     ///
@@ -114,7 +114,7 @@ pub struct KeyBinding {
     pub key: String,
     /// The action to be triggered by the keyboard shortcut.
     ///
-    /// Must be one of the ones defined in [crate::actions].
+    /// Must be one of the ones defined in [mod@crate::actions].
     pub action: String,
 }
 
