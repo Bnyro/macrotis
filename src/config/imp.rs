@@ -40,6 +40,7 @@ fn default_key_bindings() -> Vec<KeyBinding> {
         KeyBinding::new("o", OpenFiles),
         KeyBinding::new("i", ToggleImageInfo),
         KeyBinding::new("q", CloseWindow),
+        KeyBinding::new("f", ToggleFullscreen),
     ]
 }
 

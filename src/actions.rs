@@ -5,7 +5,7 @@ use crate::config::{self, CONFIG};
 // All of these must be translated in the `locales` folder!
 //
 // Additionally, all of them have to be added to `build_key_bindings_from_config`!
-actions!([Help, CloseWindow]);
+actions!([Help, ToggleFullscreen, CloseWindow]);
 actions!([NextImage, PreviousImage, OpenFiles]);
 actions!([ZoomIn, ZoomOut]);
 actions!([MoveUp, MoveDown, MoveLeft, MoveRight]);
@@ -19,6 +19,7 @@ pub fn build_key_bindings_from_config() -> Vec<KeyBinding> {
 
     [
         create_key_bindings(Help, key_bindings),
+        create_key_bindings(ToggleFullscreen, key_bindings),
         create_key_bindings(CloseWindow, key_bindings),
         create_key_bindings(NextImage, key_bindings),
         create_key_bindings(PreviousImage, key_bindings),

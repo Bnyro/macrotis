@@ -6,10 +6,11 @@ resolution = "Resolution: %{resolution}"
 
 [actions]
 help = "Help"
+togglefullscreen = "Toggle fullscreen"
+closewindow = "Close window"
 nextimage = "Next image"
 previousimage = "Previous image"
 openfiles = "Open files"
-closewindow = "Close window"
 zoomin = "Zoom in"
 zoomout = "Zoom out"
 moveup = "Move up"

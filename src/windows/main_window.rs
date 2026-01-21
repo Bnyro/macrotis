@@ -28,6 +28,7 @@ impl Render for AppWindow {
             .on_action(|_: &CloseWindow, window, _cx| window.remove_window())
             .on_action(cx.listener(Self::open_files))
             .on_action(cx.listener(Self::open_help))
+            .on_action(cx.listener(Self::toggle_fullscreen))
             .on_action(cx.listener(Self::next_image))
             .on_action(cx.listener(Self::prev_image))
             .on_action(cx.listener(Self::zoom_in))
@@ -121,6 +122,16 @@ impl AppWindow {
             },
             |window, cx| cx.new(|cx| HelpWindow::new(window, cx)),
         );
+    }
+
+    fn toggle_fullscreen(
+        &mut self,
+        _action: &ToggleFullscreen,
+        window: &mut Window,
+        _cx: &mut Context<Self>,
+    ) {
+        println!("toggle fullscreen");
+        window.toggle_fullscreen();
     }
 
     fn open_files(&mut self, _action: &OpenFiles, _window: &mut Window, cx: &mut Context<Self>) {
