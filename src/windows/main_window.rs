@@ -91,12 +91,13 @@ impl AppWindow {
         if self.selected_img_index == 0 {
             return;
         }
+
         self.selected_img_index -= 1;
         self.set_image(cx, self.selected_image());
     }
 
     fn next_image(&mut self, _action: &NextImage, _window: &mut Window, cx: &mut Context<Self>) {
-        if self.selected_img_index >= self.image_paths.len() - 1 {
+        if self.selected_img_index + 1 >= self.image_paths.len() {
             return;
         }
 
