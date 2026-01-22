@@ -24,6 +24,7 @@ impl Render for AppWindow {
             } else {
                 transparent_black().to_rgb()
             })
+            .text_color(CONFIG.get().unwrap().theme.foreground.into_rgba())
             .track_focus(&self.focus_handle)
             .on_action(|_: &CloseWindow, window, _cx| window.remove_window())
             .on_action(cx.listener(Self::open_files))
@@ -58,6 +59,13 @@ impl Render for AppWindow {
                     )
                 },
             )
+            .when_some(self.selected_image(), |container, _| {
+                container.child(div().absolute().bottom_2().right_2().child(format!(
+                    "{}/{}",
+                    self.selected_img_index + 1,
+                    self.image_paths.len()
+                )))
+            })
     }
 }
 
