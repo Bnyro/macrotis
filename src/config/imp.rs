@@ -26,26 +26,6 @@ impl KeyBinding {
     }
 }
 
-fn default_key_bindings() -> Vec<KeyBinding> {
-    vec![
-        KeyBinding::new("?", Help),
-        KeyBinding::new("l", NextImage),
-        KeyBinding::new("h", PreviousImage),
-        KeyBinding::new("g", GotoFirstImage),
-        KeyBinding::new("shift-g", GotoLastImage),
-        KeyBinding::new("+", ZoomIn),
-        KeyBinding::new("-", ZoomOut),
-        KeyBinding::new("left", MoveLeft),
-        KeyBinding::new("right", MoveRight),
-        KeyBinding::new("up", MoveUp),
-        KeyBinding::new("down", MoveDown),
-        KeyBinding::new("o", OpenFiles),
-        KeyBinding::new("i", ToggleImageInfo),
-        KeyBinding::new("q", CloseWindow),
-        KeyBinding::new("f", ToggleFullscreen),
-    ]
-}
-
 fn read_paths_from_stdin() -> Vec<PathBuf> {
     let stdin = io::stdin();
     let mut handle = stdin.lock();
