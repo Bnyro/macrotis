@@ -41,7 +41,7 @@ struct ArgsWithConfig {
 #[derive(ClapSerde, Serialize, Deserialize, Debug)]
 pub struct Config {
     /// Whether to make the window transparent.
-    #[arg(short, long, action = ArgAction::SetTrue)]
+    #[arg(short = "t", long, action = ArgAction::SetTrue)]
     #[serde(default)]
     pub no_transparency: bool,
     /// Whether to open the app in fullscreen mode.
