@@ -3,6 +3,12 @@ name = "macrotis"
 version = "0.1.0"
 edition = "2024"
 
+# Size optimizations for final release binary
+[profile.release]
+lto = "fat"
+opt-level = "z"
+strip = true
+
 [dependencies]
 # UI
 gpui = { git = "https://github.com/zed-industries/zed" }
