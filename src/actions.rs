@@ -6,7 +6,7 @@ use crate::config::{self, CONFIG};
 /// this macro does three things:
 /// - Invoke [gpui::actions!] for each of the action names
 /// - Create a method `default_key_bindings` containing a list of all default key bindings
-/// - Create a method `convert_to_gpui_keybindings` which iterates
+/// - Create a method `convert_to_gpui_keybindings` which converts the [config::KeyBinding]s to [gpui::KeyBinding].
 ///
 /// This is necessary to avoid duplicated code here and because actions created by the
 /// [gpui::actions!] macro don't implement [Clone], making them hard to handle.
@@ -20,7 +20,7 @@ macro_rules! build_actions_with_key_bindings {
         }
 
         /// Convert a `Vec` of [config::KeyBinding] to a `Vec` of [gpui::KeyBinding].
-        pub fn convert_to_gpui_keybindings(key_bindings: &[config::KeyBinding]) -> Vec<KeyBinding> {
+        fn convert_to_gpui_keybindings(key_bindings: &[config::KeyBinding]) -> Vec<KeyBinding> {
             [
                 $(create_key_bindings($action_name, key_bindings),)*
             ].iter().flatten().cloned().collect()

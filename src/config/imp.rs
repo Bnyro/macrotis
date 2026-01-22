@@ -1,8 +1,10 @@
+use std::collections::HashSet;
 use std::io;
 use std::io::Read;
 use std::path::PathBuf;
 use std::sync::OnceLock;
 
+use anyhow::anyhow;
 use clap::Parser;
 use clap_serde_derive::ClapSerde;
 use gpui::Action;
@@ -51,6 +53,8 @@ fn read_config_file(config_path_override: Option<PathBuf>) -> anyhow::Result<Con
         config.keybindings = default_key_bindings();
     }
 
+    validate_config(&config)?;
+
     if config_path_override.is_none() {
         // store the current config including the default key bindings (if no bindings are specified)
         //
@@ -59,6 +63,25 @@ fn read_config_file(config_path_override: Option<PathBuf>) -> anyhow::Result<Con
     }
 
     Ok(config)
+}
+
+/// Validate the configuration.
+///
+/// This especially ensures that no key is assigned to multiple actions.
+fn validate_config(config: &Config) -> anyhow::Result<()> {
+    let binding_keys = config.keybindings.iter().map(|binding| &binding.key);
+
+    // Find duplicated keys, i.e. one key is assigned to multiple actions
+    let mut unique_keys = HashSet::new();
+    for key in binding_keys {
+        if !unique_keys.insert(key) {
+            return Err(anyhow!(
+                "[keybindings] - key \"{key}\" is assigned to multiple actions."
+            ));
+        }
+    }
+
+    Ok(())
 }
 
 /// Parse the CLI arguments and fall back to the config file for all arguments
