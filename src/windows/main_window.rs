@@ -32,6 +32,8 @@ impl Render for AppWindow {
             .on_action(cx.listener(Self::toggle_fullscreen))
             .on_action(cx.listener(Self::next_image))
             .on_action(cx.listener(Self::prev_image))
+            .on_action(cx.listener(Self::first_image))
+            .on_action(cx.listener(Self::last_image))
             .on_action(cx.listener(Self::zoom_in))
             .on_action(cx.listener(Self::zoom_out))
             .on_action(cx.listener(Self::move_up))
@@ -110,6 +112,34 @@ impl AppWindow {
         }
 
         self.selected_img_index += 1;
+        self.set_image(cx, self.selected_image());
+    }
+
+    fn first_image(
+        &mut self,
+        _action: &GotoFirstImage,
+        _window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        if self.image_paths.is_empty() {
+            return;
+        }
+
+        self.selected_img_index = 0;
+        self.set_image(cx, self.selected_image());
+    }
+
+    fn last_image(
+        &mut self,
+        _action: &GotoLastImage,
+        _window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
+        if self.image_paths.is_empty() {
+            return;
+        }
+
+        self.selected_img_index = self.image_paths.len() - 1;
         self.set_image(cx, self.selected_image());
     }
 

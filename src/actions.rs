@@ -6,10 +6,10 @@ use crate::config::{self, CONFIG};
 //
 // Additionally, all of them have to be added to `build_key_bindings_from_config`!
 actions!([Help, ToggleFullscreen, CloseWindow]);
-actions!([NextImage, PreviousImage, OpenFiles]);
+actions!([NextImage, PreviousImage, GotoFirstImage, GotoLastImage]);
 actions!([ZoomIn, ZoomOut]);
 actions!([MoveUp, MoveDown, MoveLeft, MoveRight]);
-actions!([ToggleImageInfo]);
+actions!([OpenFiles, ToggleImageInfo]);
 
 /// Build a vec of [gpui::KeyBinding] from the key bindings configured in [crate::config::CONFIG].
 ///
@@ -23,6 +23,8 @@ pub fn build_key_bindings_from_config() -> Vec<KeyBinding> {
         create_key_bindings(CloseWindow, key_bindings),
         create_key_bindings(NextImage, key_bindings),
         create_key_bindings(PreviousImage, key_bindings),
+        create_key_bindings(GotoFirstImage, key_bindings),
+        create_key_bindings(GotoLastImage, key_bindings),
         create_key_bindings(OpenFiles, key_bindings),
         create_key_bindings(ZoomIn, key_bindings),
         create_key_bindings(ZoomOut, key_bindings),

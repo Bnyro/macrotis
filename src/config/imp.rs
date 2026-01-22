@@ -31,6 +31,8 @@ fn default_key_bindings() -> Vec<KeyBinding> {
         KeyBinding::new("?", Help),
         KeyBinding::new("l", NextImage),
         KeyBinding::new("h", PreviousImage),
+        KeyBinding::new("g", GotoFirstImage),
+        KeyBinding::new("shift-g", GotoLastImage),
         KeyBinding::new("+", ZoomIn),
         KeyBinding::new("-", ZoomOut),
         KeyBinding::new("left", MoveLeft),
