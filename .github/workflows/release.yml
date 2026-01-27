@@ -1,0 +1,59 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*'
+
+jobs:
+  create-release:
+    name: Publish release builds to GitHub releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # - name: Create changelog
+      #   id: changelog
+      #   uses: requarks/changelog-action@v1
+      #   with:
+      #     token: ${{ github.token }}
+      #     tag: ${{ github.ref_name }}
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          # body: ${{ steps.changelog.outputs.changes }}
+          make_latest: true
+
+  build-and-upload:
+    needs: create-release
+    name: Create release builds and publish them to GitHub releases
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # don't fail other jobs if one fails
+      matrix:
+        jobs:
+          - name: amd64
+            target: x86_64-unknown-linux-gnu
+          - name: arm64
+            target: aarch64-unknown-linux-gnu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add cross-build architecture and fetch packages
+        run: sudo dpkg --add-architecture ${{ matrix.jobs.name }} && sudo apt update
+        continue-on-error: true
+
+      - name: Install build dependencies (cross if required)
+        run: sudo apt install -y libxkbcommon-dev:${{ matrix.jobs.name }} libxkbcommon-x11-dev:${{ matrix.jobs.name }}
+
+      - name: Build and upload binaries
+        uses: taiki-e/upload-rust-binary-action@v1
+        with:
+          bin: macrotis
+          target: ${{ matrix.jobs.target }}
+          tar: unix
+          zip: windows
+          token: ${{ secrets.GITHUB_TOKEN }}
