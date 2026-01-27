@@ -58,7 +58,7 @@ fn gen_completions(out_dir: &Path) -> std::io::Result<()> {
 
 fn gen_example_config(out_dir: &Path) -> std::io::Result<()> {
     let default_config = Config::default();
-    let config_str = toml::to_string(&default_config).map_err(|err| std::io::Error::other(err))?;
+    let config_str = toml::to_string(&default_config).map_err(std::io::Error::other)?;
 
     // example config doesn't contain any keybindings, due to the HACK applied in
     // the `read_config_file` method

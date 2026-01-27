@@ -61,7 +61,7 @@ build_actions_with_key_bindings!(
 pub fn build_key_bindings_from_config() -> Vec<KeyBinding> {
     let configured_key_bindings = &CONFIG.get().unwrap().keybindings;
 
-    convert_to_gpui_keybindings(&configured_key_bindings)
+    convert_to_gpui_keybindings(configured_key_bindings)
 }
 
 /// Takes a [gpui::Action] and builds [gpui::KeyBinding]s for all of the provided
