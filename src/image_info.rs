@@ -1,5 +1,6 @@
 use std::{fmt::Display, fs::File, io::BufReader, os::unix::fs::MetadataExt, path::Path};
 
+#[derive(Copy, Clone, Debug)]
 pub struct ImageResolution {
     pub width: usize,
     pub height: usize,
@@ -13,6 +14,12 @@ impl Display for ImageResolution {
             width = self.width,
             height = self.height
         )
+    }
+}
+
+impl ImageResolution {
+    pub fn aspect_ratio(&self) -> f32 {
+        (self.width as f32) / (self.height as f32)
     }
 }
 
