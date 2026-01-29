@@ -13,41 +13,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Create changelog
-      #   id: changelog
-      #   uses: requarks/changelog-action@v1
-      #   with:
-      #     token: ${{ github.token }}
-      #     tag: ${{ github.ref_name }}
+      - name: Create changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.ref_name }}
 
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
-          # body: ${{ steps.changelog.outputs.changes }}
+          body: ${{ steps.changelog.outputs.changes }}
           make_latest: true
 
   build-and-upload:
     needs: create-release
     name: Create release builds and publish them to GitHub releases
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.jobs.os }}
     strategy:
-      fail-fast: false # don't fail other jobs if one fails
+      fail-fast: false # don't fail other architecture jobs if one fails
       matrix:
         jobs:
-          - name: amd64
+          - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-          - name: arm64
+          - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Add cross-build architecture and fetch packages
-        run: sudo dpkg --add-architecture ${{ matrix.jobs.name }} && sudo apt update
-        continue-on-error: true
-
-      - name: Install build dependencies (cross if required)
-        run: sudo apt install -y libxkbcommon-dev:${{ matrix.jobs.name }} libxkbcommon-x11-dev:${{ matrix.jobs.name }}
+      - name: Install build dependencies
+        run: sudo apt install -y libxkbcommon-dev libxkbcommon-x11-dev
 
       - name: Build and upload binaries
         uses: taiki-e/upload-rust-binary-action@v1
