@@ -45,7 +45,7 @@ impl Serialize for Color {
 
 struct ColorVisitor;
 
-impl<'de> Visitor<'de> for ColorVisitor {
+impl Visitor<'_> for ColorVisitor {
     type Value = Color;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -72,6 +72,7 @@ impl<'de> Deserialize<'de> for Color {
 impl FromStr for Color {
     type Err = String;
 
+    #[allow(clippy::many_single_char_names)]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim_start_matches('#');
 

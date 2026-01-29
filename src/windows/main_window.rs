@@ -149,6 +149,7 @@ impl AppWindow {
         });
     }
 
+    #[allow(clippy::unused_self)]
     fn open_help(&mut self, _action: &Help, _window: &mut Window, cx: &mut Context<Self>) {
         let window_bounds =
             WindowBounds::Windowed(Bounds::centered(None, size(px(300.0), px(300.0)), cx));
@@ -163,16 +164,17 @@ impl AppWindow {
         );
     }
 
+    #[allow(clippy::unused_self)]
     fn toggle_fullscreen(
         &mut self,
         _action: &ToggleFullscreen,
         window: &mut Window,
         _cx: &mut Context<Self>,
     ) {
-        println!("toggle fullscreen");
         window.toggle_fullscreen();
     }
 
+    #[allow(clippy::unused_self)]
     fn open_files(&mut self, _action: &OpenFiles, _window: &mut Window, cx: &mut Context<Self>) {
         let recv = cx.prompt_for_paths(PathPromptOptions {
             files: true,
@@ -182,7 +184,7 @@ impl AppWindow {
         });
 
         cx.spawn(async |window, cx| {
-            let mut selection_result = recv.await.ok().and_then(|res| res.ok()).and_then(|res| res);
+            let mut selection_result = recv.await.ok().and_then(std::result::Result::ok).and_then(|res| res);
 
             if let Some(images) = &mut selection_result {
                 let _ = window.update(cx, |this, cx| {
@@ -202,19 +204,19 @@ impl AppWindow {
     pub fn zoom_in(&mut self, _action: &ZoomIn, _window: &mut Window, cx: &mut Context<Self>) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.zoom_in(cx);
-        })
+        });
     }
 
     pub fn zoom_out(&mut self, _action: &ZoomOut, _window: &mut Window, cx: &mut Context<Self>) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.zoom_out(cx);
-        })
+        });
     }
 
     pub fn move_left(&mut self, _action: &MoveLeft, _window: &mut Window, cx: &mut Context<Self>) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.move_left(cx);
-        })
+        });
     }
 
     pub fn move_right(
@@ -225,19 +227,19 @@ impl AppWindow {
     ) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.move_right(cx);
-        })
+        });
     }
 
     pub fn move_up(&mut self, _action: &MoveUp, _window: &mut Window, cx: &mut Context<Self>) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.move_up(cx);
-        })
+        });
     }
 
     pub fn move_down(&mut self, _action: &MoveDown, _window: &mut Window, cx: &mut Context<Self>) {
         self.zoomable_image.update(cx, |zoomable_image, cx| {
             zoomable_image.move_down(cx);
-        })
+        });
     }
 
     pub fn toggle_image_info(

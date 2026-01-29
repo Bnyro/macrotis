@@ -1,3 +1,6 @@
+#![warn(clippy::pedantic)]
+#![allow(clippy::doc_markdown, clippy::wildcard_imports)]
+
 use crate::{
     actions::*,
     config::{CONFIG, parse_cli_args_with_config},
@@ -37,7 +40,7 @@ fn main() {
             if path.is_relative() {
                 cwd.join(path)
             } else {
-                path.to_path_buf()
+                path.clone()
             }
         })
         .filter(|path| path.is_file())

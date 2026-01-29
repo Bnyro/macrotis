@@ -16,13 +16,13 @@ macro_rules! build_actions_with_key_bindings {
         actions!([$($action_name),*]);
 
         pub fn default_key_bindings() -> Vec<config::KeyBinding> {
-            vec![$((config::KeyBinding::new($default_key, $action_name)),)*]
+            vec![$((config::KeyBinding::new($default_key, &$action_name)),)*]
         }
 
         /// Convert a `Vec` of [config::KeyBinding] to a `Vec` of [gpui::KeyBinding].
         fn convert_to_gpui_keybindings(key_bindings: &[config::KeyBinding]) -> Vec<KeyBinding> {
             [
-                $(create_key_bindings($action_name, key_bindings),)*
+                $(create_key_bindings(&$action_name, key_bindings),)*
             ].iter().flatten().cloned().collect()
         }
     };
@@ -69,7 +69,7 @@ pub fn build_key_bindings_from_config() -> Vec<KeyBinding> {
 ///
 /// Used by [convert_to_gpui_keybindings].
 fn create_key_bindings<T: Action + Clone>(
-    action: T,
+    action: &T,
     key_bindings: &[config::KeyBinding],
 ) -> Vec<KeyBinding> {
     let action_name = action.name();

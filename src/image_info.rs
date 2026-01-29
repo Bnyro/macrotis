@@ -18,6 +18,7 @@ impl Display for ImageResolution {
 }
 
 impl ImageResolution {
+    #[allow(clippy::cast_precision_loss)]
     pub fn aspect_ratio(&self) -> f32 {
         (self.width as f32) / (self.height as f32)
     }

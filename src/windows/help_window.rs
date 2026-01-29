@@ -84,7 +84,7 @@ impl Render for KeyBindingItem {
                         binding
                             .keystrokes()
                             .iter()
-                            .map(|keystroke| keystroke.key())
+                            .map(gpui::KeybindingKeystroke::key)
                             .collect::<Vec<_>>()
                             .join("-"),
                     ),

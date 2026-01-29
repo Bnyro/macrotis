@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::io;
 use std::io::Read;
+use std::path::Path;
 use std::path::PathBuf;
 use std::sync::OnceLock;
 
@@ -20,7 +21,7 @@ pub static CONFIG: OnceLock<Config> = OnceLock::new();
 static CONFIG_FILE_NAME: &str = "config";
 
 impl KeyBinding {
-    pub fn new<T: Action>(key: &str, action: T) -> Self {
+    pub fn new<T: Action>(key: &str, action: &T) -> Self {
         KeyBinding {
             key: key.to_string(),
             action: action.name().to_string(),
@@ -37,12 +38,12 @@ fn read_paths_from_stdin() -> Vec<PathBuf> {
 
     let input_str = String::from_utf8(v).unwrap();
 
-    input_str.split("\n").map(PathBuf::from).collect()
+    input_str.split('\n').map(PathBuf::from).collect()
 }
 
-fn read_config_file(config_path_override: Option<PathBuf>) -> anyhow::Result<Config> {
+fn read_config_file(config_path_override: Option<&Path>) -> anyhow::Result<Config> {
     let mut config: Config = if let Some(config_path) = &config_path_override {
-        confy::load_path(config_path)?
+        confy::load_path(*config_path)?
     } else {
         confy::load::<Config>(env!("CARGO_PKG_NAME"), Some(CONFIG_FILE_NAME)).unwrap_or_default()
     };
@@ -88,7 +89,7 @@ fn validate_config(config: &Config) -> anyhow::Result<()> {
 /// that were not provided.
 pub fn parse_cli_args_with_config() -> anyhow::Result<(Vec<PathBuf>, Config)> {
     let mut args = ArgsWithConfig::parse();
-    let config = read_config_file(args.config_path)?;
+    let config = read_config_file(args.config_path.as_deref())?;
 
     // parse image paths from stdin if '-' is provided as argument
     if args.images == vec![PathBuf::from("-")] {
